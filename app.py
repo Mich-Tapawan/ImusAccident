@@ -8,6 +8,7 @@ from scripts.month_data import generate_month_list
 from scripts.barangay_list import generate_barangay_list
 from scripts.model import AccidentModel
 import logging
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -79,4 +80,4 @@ def get_barangay_list():
         return jsonify('Unable to generate list', e), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)), debug=True)
