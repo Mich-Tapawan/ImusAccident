@@ -198,11 +198,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchMonthData(year, month) {
     try {
-      let response = await fetch("http://localhost:5000/getMonthData", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ year: year, month: month }),
-      });
+      let response = await fetch(
+        "https://imus-accident.onrender.com/getMonthData",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ year: year, month: month }),
+        }
+      );
       let monthData = await response.json();
       monthName.innerHTML = month;
       totalValue.innerHTML = monthData.totalAccidents;
@@ -214,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchAccidentPercentage(barangay, hour) {
     try {
-      let response = await fetch("http://localhost:5000/predict", {
+      let response = await fetch("https://imus-accident.onrender.com/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ barangay: barangay.toUpperCase(), hour: hour }),
@@ -231,10 +234,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchBarangayList() {
     try {
-      let response = await fetch("http://localhost:5000/getBarangayList", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      let response = await fetch(
+        "https://imus-accident.onrender.com/getBarangayList",
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       let data = await response.json();
       return data;
