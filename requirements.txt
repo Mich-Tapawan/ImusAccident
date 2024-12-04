@@ -1,0 +1,16 @@
+pandas
+numpy
+flask
+scikit-learn
+joblib
+plotly
+imblearn
+matplotlib
+geopandas
+folium
+flask_cors
+
+# python3 -m venv venv
+# .\venv\Scripts\activate
+# pip install -r requirements.txt
+# python -m app --app ./app.py run
