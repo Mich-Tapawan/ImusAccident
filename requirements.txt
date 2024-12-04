@@ -10,3 +10,4 @@ matplotlib
 geopandas
 folium
 gunicorn
+openpyxl
