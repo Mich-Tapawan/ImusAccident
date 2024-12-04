@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Search barangay accident percentage
   const barangay = document.getElementById("brgy");
+  const searchBox = document.querySelector("#search-box");
   const resultBox = document.querySelector(".result-box");
   const suggestions = document.querySelector(".result-box ul");
   const hour = document.getElementById("hour");
@@ -136,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Hides suggestion box when clicking outside
   document.addEventListener("mouseup", (e) => {
-    if (!resultBox.contains(e.target)) {
+    if (!searchBox.contains(e.target)) {
       resultBox.style.display = "none";
     }
   });

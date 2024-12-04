@@ -79,4 +79,4 @@ def get_barangay_list():
         return jsonify('Unable to generate list', e), 500
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(host="0.0.0.0", port=5000)
