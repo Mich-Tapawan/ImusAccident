@@ -11,4 +11,3 @@ geopandas
 folium
 gunicorn
 openpyxl
-os
