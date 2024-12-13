@@ -7,6 +7,7 @@ from scripts.chart import generate_chart
 from scripts.month_data import generate_month_list
 from scripts.barangay_list import generate_barangay_list
 from scripts.model import AccidentModel
+from scripts.summary_report import generate_summary_report
 import logging
 import os
 
@@ -78,6 +79,13 @@ def get_barangay_list():
         return generate_barangay_list(EXCEL_FILE_PATH)
     except Exception as e:
         return jsonify('Unable to generate list', e), 500
+
+@app.route('/getSummaryReport/<string:barangay>', methods=['GET'])
+def get_summary_report(barangay):
+    try:
+        return generate_summary_report(barangay)
+    except Exception as e:
+        return jsonify('Unable to generate summary report', e), 500
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)), debug=True)

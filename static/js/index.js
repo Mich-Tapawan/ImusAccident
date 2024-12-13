@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const barGraph = document.getElementById("bar-graph");
   const heatMap = document.getElementById("heat-map");
   const searchResult = document.getElementById("search-result");
+  const reportBtn = document.getElementById("report-btn");
 
   const monthName = document.getElementById("month-value");
   const totalValue = document.getElementById("total-value");
@@ -196,16 +197,32 @@ document.addEventListener("DOMContentLoaded", () => {
     hour.appendChild(option);
   }
 
-  async function fetchMonthData(year, month) {
+  reportBtn.addEventListener("click", () => {
+    getSummaryReport(barangayText.innerHTML);
+  });
+
+  async function getSummaryReport(barangay) {
+    console.log(barangay);
     try {
-      let response = await fetch(
-        "https://imus-accident.onrender.com/getMonthData",
+      const res = await fetch(
+        `http://localhost:5000/getSummaryReport/${barangay}`,
         {
-          method: "POST",
+          method: "GET",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ year: year, month: month }),
         }
       );
+    } catch (error) {
+      console.error("Error fetching summary report: ", error);
+    }
+  }
+
+  async function fetchMonthData(year, month) {
+    try {
+      let response = await fetch("http://localhost:5000/getMonthData", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ year: year, month: month }),
+      });
       let monthData = await response.json();
       monthName.innerHTML = month;
       totalValue.innerHTML = monthData.totalAccidents;
@@ -217,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchAccidentPercentage(barangay, hour) {
     try {
-      let response = await fetch("https://imus-accident.onrender.com/predict", {
+      let response = await fetch("http://localhost:5000/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ barangay: barangay.toUpperCase(), hour: hour }),
@@ -234,13 +251,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchBarangayList() {
     try {
-      let response = await fetch(
-        "https://imus-accident.onrender.com/getBarangayList",
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      let response = await fetch("http://localhost:5000/getBarangayList", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
 
       let data = await response.json();
       return data;
