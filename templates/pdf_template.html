@@ -1,0 +1,74 @@
+<p style="font-size: 20px; line-height: 1.6; margin: 10px 0">
+  <strong style="color: #555">Barangay:</strong> {{barangay_name}}
+</p>
+<p style="font-size: 20px; line-height: 1.6; margin: 10px 0">
+  <strong style="color: #555">Peak Hour:</strong> {{peak_hour}}:00
+</p>
+<p style="font-size: 20px; line-height: 1.6; margin: 10px 0">
+  <strong style="color: #555">Lowest Hour:</strong> {{lowest_hour}}:00
+</p>
+<p style="font-size: 20px; line-height: 1.6; margin: 10px 0">
+  <strong style="color: #555">Peak Quarter:</strong> {{peak_quarter}}
+</p>
+<p style="font-size: 20px; line-height: 1.6; margin: 10px 0">
+  <strong style="color: #555">Lowest Quarter:</strong> {{lowest_quarter}}
+</p>
+
+<table style="width: 100%; border-collapse: collapse; margin-top: 20px">
+  <thead>
+    <tr>
+      <th
+        style="
+          padding: 10px;
+          text-align: left;
+          font-size: 14px;
+          border: 1px solid #ddd;
+          background-color: #f4f4f4;
+          font-weight: bold;
+          text-align: center;
+        "
+      >
+        Hour
+      </th>
+      <th
+        style="
+          padding: 10px;
+          text-align: left;
+          font-size: 14px;
+          border: 1px solid #ddd;
+          background-color: #f4f4f4;
+          font-weight: bold;
+          text-align: center;
+        "
+      >
+        Accident Probability
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for hour, percentage in predictions.items() %}
+    <tr style="background-color: #f9f9f9">
+      <td
+        style="
+          padding: 10px;
+          text-align: center;
+          font-size: 14px;
+          border: 1px solid #ddd;
+        "
+      >
+        {{ hour }}:00
+      </td>
+      <td
+        style="
+          padding: 10px;
+          text-align: center;
+          font-size: 14px;
+          border: 1px solid #ddd;
+        "
+      >
+        {{ percentage }}%
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

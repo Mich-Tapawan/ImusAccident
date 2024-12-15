@@ -18,33 +18,37 @@ def generate_summary_report(barangay):
         # Find the index of the barangay in the one-hot encoded categories
         barangay_idx = np.where(barangays == barangay)[0][0]
 
-        predictions = []
-        for hour in range(24):
+        predictions = {}
+        for hour in range(1, 25):  # Adjust range to 1-24
             # Create a one-hot encoded input vector for the barangay
             input_data = np.zeros(len(barangays) + 2)
             input_data[barangay_idx] = 1  # Set the one-hot encoding for the barangay
-            input_data[-2:] = [hour, 1 if 7 <= hour <= 9 or 17 <= hour <= 19 else 0]  # Hour and peak hour flag
+            input_data[-2:] = [hour - 1, 1 if 7 <= (hour - 1) <= 9 or 17 <= (hour - 1) <= 19 else 0]  
+            # Hour - 1 for model input, since range 1-24 corresponds to indices 0-23
 
             # Predict
             probs = model.predict_proba([input_data])
-            predictions.append(round(probs[0][1] * 100, 2))  # Append percentage to the list
+            
+            # Use zero-padded string for hour key (e.g., "01", "02", "03", ...)
+            hour_key = str(hour - 1).zfill(2)
+            predictions[hour_key] = round(probs[0][1] * 100, 2)  # Add to dictionary with string hour key
 
         # Peak and lowest accident hours
-        peak_hour = np.argmax(predictions)
-        lowest_hour = np.argmin(predictions)
+        peak_hour = max(predictions, key=predictions.get)
+        lowest_hour = min(predictions, key=predictions.get)
 
         # Initialize Quarters (6-hour ranges)
         quarters = {
-            "0-5": range(0, 6),   # Midnight to early morning
-            "6-11": range(6, 12),  # Morning to noon
-            "12-17": range(12, 18),# Afternoon to early evening
-            "18-23": range(18, 24) # Evening to night
+            "1-6": range(1, 7),   # Midnight to early morning
+            "7-12": range(7, 13),  # Morning to noon
+            "13-18": range(13, 19),# Afternoon to early evening
+            "19-23": range(19, 24) # Evening to night (fixed range)
         }
 
         # Average accident probability for each quarter
         quarter_accidents = {
             quarter: round(
-            np.mean([predictions[hour] for hour in hours]), 2
+            np.mean([predictions[str(hour).zfill(2)] for hour in hours]), 2
             )
             for quarter, hours in quarters.items()
         }

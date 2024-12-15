@@ -136,13 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Search bar Auto complete sugggestion list
 
-  // Hides suggestion box when clicking outside
-  document.addEventListener("mouseup", (e) => {
-    if (!searchBox.contains(e.target)) {
-      resultBox.style.display = "none";
-    }
-  });
-
   barangay.onkeyup = async () => {
     const barangayList = await fetchBarangayList();
     resultBox.style.display = "block";
@@ -190,10 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Creates drop down list of optoins for selecting hour
-  for (let i = 1; i <= 24; i++) {
+  for (let i = 0; i < 24; i++) {
     const option = document.createElement("option");
-    option.setAttribute("value", i);
-    option.innerHTML = i;
+    // Format the hour as two digits "00" to "23"
+    const hourFormatted = String(i).padStart(2, "0") + ":00";
+    option.setAttribute("value", hourFormatted);
+    option.innerHTML = hourFormatted;
     hour.appendChild(option);
   }
 
@@ -211,6 +206,15 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/json" },
         }
       );
+      if (res.ok) {
+        const blob = await res.blob(); // Get the PDF as a Blob
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob); // Create a URL for the blob
+        link.download = "summary_report.pdf"; // Set the file name for download
+        link.click(); // Trigger the download
+      } else {
+        console.error("Error fetching summary report:", res.statusText);
+      }
     } catch (error) {
       console.error("Error fetching summary report: ", error);
     }

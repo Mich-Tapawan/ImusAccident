@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from flask_cors import CORS
 from datetime import datetime
+import pdfkit
 from scripts.bar_graph import generate_bar_graph
 from scripts.heat_map import generate_heat_map
 from scripts.chart import generate_chart
@@ -60,18 +61,29 @@ def predict_accident():
         data = request.get_json()
         barangay = data.get('barangay')
         hour = data.get('hour')
-        if barangay is None or hour is None:
-            return jsonify({'error':'PLease provide barangay and hour.'}), 400
         
+        # Check if both barangay and hour are provided
+        if barangay is None or hour is None:
+            return jsonify({'error': 'Please provide barangay and hour.'}), 400
+        
+        # Extract the hour part from the "hh:mm" format
         try:
-            hour = int(hour)
+            hour = int(hour.split(":")[0])
         except ValueError:
-            return jsonify({'error': 'Hour must be an integer.'}), 400
-    
-        response = accident_model.predict_accident_chance(barangay, hour-1)
+            return jsonify({'error': 'Invalid hour format. Must be in "hh:mm" format.'}), 400
+        except IndexError:
+            return jsonify({'error': 'Hour format is incorrect. Please provide hour in "hh:mm" format.'}), 400
+        
+        # Ensure the hour is valid (between 0 and 23)
+        if hour < 0 or hour > 23:
+            return jsonify({'error': 'Hour must be between 00 and 23.'}), 400
+        
+        response = accident_model.predict_accident_chance(barangay, hour)
         return jsonify(response)
+    
     except Exception as e:
-        return jsonify('No results found', e), 500
+        return jsonify({'error': f'No results found: {str(e)}'}), 500
+
 
 @app.route('/getBarangayList', methods=['GET'])
 def get_barangay_list():
@@ -83,7 +95,22 @@ def get_barangay_list():
 @app.route('/getSummaryReport/<string:barangay>', methods=['GET'])
 def get_summary_report(barangay):
     try:
-        return generate_summary_report(barangay)
+        summary_report =  generate_summary_report(barangay)
+        rendered_html = render_template('pdf_template.html', barangay_name=barangay,
+                                         peak_hour=summary_report["peak_hour"],
+                                           lowest_hour=summary_report["lowest_hour"],
+                                             peak_quarter = summary_report["peak_quarter"],
+                                               lowest_quarter = summary_report["lowest_quarter"],
+                                                 predictions=summary_report["predictions"])
+        
+        path_to_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+        pdf = pdfkit.from_string(rendered_html, False, configuration=config)
+         # Create a temporary file for the PDF
+        pdf_file = os.path.join(os.getcwd(), "summary_report.pdf")
+        with open(pdf_file, "wb") as f:
+            f.write(pdf)
+        return send_file(pdf_file, as_attachment=True, download_name="summary_report.pdf", mimetype="application/pdf")
     except Exception as e:
         return jsonify('Unable to generate summary report', e), 500
 
