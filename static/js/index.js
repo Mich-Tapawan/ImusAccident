@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const chatbotIcon = document.getElementById("chatbot");
   const toggleBtn = document.getElementById("toggle-btn");
   const barGraph = document.getElementById("bar-graph");
   const heatMap = document.getElementById("heat-map");
@@ -221,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function fetchMonthData(year, month) {
+    console.log(month, year);
     try {
       let response = await fetch("http://localhost:5000/getMonthData", {
         method: "POST",

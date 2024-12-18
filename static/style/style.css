@@ -13,15 +13,21 @@ body {
 }
 
 nav {
+  display: flex;
   background-color: var(--secondary);
   padding-block: 1rem;
   padding-inline: 8rem;
+  justify-content: space-between;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+#chatbot {
+  width: 70px;
 }
 
 .main-container {
